@@ -1,10 +1,10 @@
 # %%
 
-from pandas.core.frame import DataFrame
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 save = os.path.join(os.getcwd(), "results")
 
@@ -23,17 +23,19 @@ df_dict = {
 }
 
 anscombe_df = pd.DataFrame(df_dict, index=x)
-anscombe_df
 
 
 def calculate_basic(data):
-    basic = data.describe().loc[['mean', 'std']
-    variation= pd.DataFrame({'variation': data.var()})
-    correlation= pd.DataFrame({'correlation': data.reset_index().corr()})
-    basic= basic.T.merge(variation, left_index = True, right_index = True)
-    basic= basic.T.merge(correlation, left_index = True, right_index = True)
+    basic = data.describe().loc[['mean', 'std', 'max', 'min']]
+    variation = pd.DataFrame({'variation': data.var()})
+    correlation = data.corr()
+    basic = basic.T.merge(variation, left_index=True, right_index=True)
+    basic = pd.concat([basic, correlation], axis=1, join='inner')
 
     return basic
+
+
+print(calculate_basic(anscombe_df))
 
 print(anscombe_df.mean().round(2))
 print(anscombe_df.std(ddof=0).round(2))
@@ -50,8 +52,8 @@ print(anscombe_df.sample(5))
 
 anscombe_df.plot(subplots=True, figsize=(5, 15), style="o", ms=5)
 
-scatter_plot_df= anscombe_df.reset_index()
-fig, axs= plt.subplots(2, 2, sharex=True, sharey=True, figsize=(6, 6))
+scatter_plot_df = anscombe_df.reset_index()
+fig, axs = plt.subplots(2, 2, sharex=True, sharey=True, figsize=(6, 6))
 axs[0, 0].set(xlim=(0, 20), ylim=(2, 14))
 axs[0, 0].set(xticks=(0, 10, 20), yticks=(4, 8, 12))
 
