@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-save = os.path.join(os.getcwd(), "results")
+save_results = os.path.join(os.getcwd(), "results")
 
 x = [10, 8, 13, 9, 11, 14, 6, 4, 12, 7, 5]
 y1 = [8.04, 6.95, 7.58, 8.81, 8.33, 9.96, 7.24, 4.26, 10.84, 4.82, 5.68]
@@ -35,39 +35,31 @@ def calculate_basic(data):
     return basic
 
 
-print(calculate_basic(anscombe_df))
-
-print(anscombe_df.mean().round(2))
-print(anscombe_df.std(ddof=0).round(2))
-anscombe_df.reset_index().corr().round(2)
-anscombe_df.var().round(1)
-
-# display(anscombe_df.head(2))
-# display(anscombe_df.tail(4))
-# display(anscombe_df.sample(5))
-
-print(anscombe_df.head(2))
-print(anscombe_df.tail(4))
-print(anscombe_df.sample(5))
-
-anscombe_df.plot(subplots=True, figsize=(5, 15), style="o", ms=5)
-
-scatter_plot_df = anscombe_df.reset_index()
 fig, axs = plt.subplots(2, 2, sharex=True, sharey=True, figsize=(6, 6))
 axs[0, 0].set(xlim=(0, 20), ylim=(2, 14))
 axs[0, 0].set(xticks=(0, 10, 20), yticks=(4, 8, 12))
+fig.suptitle('Ansombe results:', fontsize=12)
+
+for i, ax in enumerate(axs.flat):
+    ax.set_title('Plot {}'.format(i + 1))
+
+plt.setp(axs[-1, :], xlabel='x')
+plt.setp(axs[:, 0], ylabel='y')
 
 axs[0, 0].scatter(x, y1)
 axs[0, 1].scatter(x, y2)
 axs[1, 0].scatter(x, y3)
 axs[1, 1].scatter(x4, y4)
 
-fig.tight_layout()
-plt.show()
+if __name__ == "__main__":
+    try:
+        os.mkdir(save_results)
+    except:
+        pass
 
-anscombe_df.describe()
-anscombe_df.info()
+calculate_basic(anscombe_df).to_csv(
+    os.path.join(save_results, "calculate.csv"))
+plt.savefig(os.path.join(save_results, "plot.jpg"))
 
 
-sns.pairplot(anscombe_df, corner=True)
 # %%
